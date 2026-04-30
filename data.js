@@ -796,5 +796,553 @@ export const assessments = [
         tags: ['消息焦虑', '依附类型', '关系模式']
       }
     ]
+  },
+
+  // ========== 测评4：中高考学习动力评估 ==========
+  {
+    id: 'study-motivation',
+    name: '中高考学习动力评估',
+    subtitle: '找到你的学习驱动力，让备考更有方向',
+    duration: '约5-8分钟',
+    questionCount: 20,
+    price: '19.9',
+    priceLabel: '免费获取动力类型，19.9元解锁深度报告',
+    icon: '📚',
+    tags: ['中高考', '学习动力', '备考心理'],
+    description: '你是为热爱而学，还是为目标而战？20道题测出你的学习动力来源，找到最适合你的备考方式。',
+    theoryBasis: '基于自我决定理论（Self-Determination Theory）与成就目标理论',
+    targetAudience: '中高考学生，尤其是备考压力较大、对学习动力感到困惑的学生',
+    intro: '以下20道题，请根据你最近一个月的真实感受作答。没有对错，只有你的真实状态。',
+    dimensions: [
+      {
+        id: 'intrinsic',
+        name: '内在动机',
+        description: '你对学习本身的兴趣和热爱程度',
+        theoryNote: '内在动机是最持久的学习动力来源，Deci和Ryan的自我决定理论指出，内在动机源于自主感、胜任感和归属感的满足。'
+      },
+      {
+        id: 'extrinsic',
+        name: '外在动机',
+        description: '你对成绩、奖励、认可的追求程度',
+        theoryNote: '外在动机虽然也能驱动学习，但过度依赖可能导致学习倦怠。适度的外在动机可以与内在动机协同作用。'
+      },
+      {
+        id: 'goal-clarity',
+        name: '目标清晰度',
+        description: '你对未来目标的明确程度',
+        theoryNote: '目标设定理论指出，清晰、具体、有挑战性的目标能显著提升学习动力和学业表现。'
+      },
+      {
+        id: 'self-efficacy',
+        name: '自我效能感',
+        description: '你对自己学习能力的信心程度',
+        theoryNote: 'Bandura的自我效能感理论指出，相信自己能够成功是学习动力的重要组成部分。'
+      }
+    ],
+    questions: [
+      { id: 1, dimensionId: 'intrinsic', text: '我在学习新知识时会感到兴奋和好奇，即使这不是考试内容。', reverse: false },
+      { id: 2, dimensionId: 'intrinsic', text: '我会主动阅读与课本相关的课外书籍，因为我真的很感兴趣。', reverse: false },
+      { id: 3, dimensionId: 'intrinsic', text: '解决一道难题后，我会感到很有成就感，不是因为分数，而是过程本身。', reverse: false },
+      { id: 4, dimensionId: 'intrinsic', text: '我觉得学习很枯燥，只有考好了才有意义。', reverse: true },
+      { id: 5, dimensionId: 'intrinsic', text: '我会花时间研究自己感兴趣的学科，即使它不考。', reverse: false },
+      { id: 6, dimensionId: 'extrinsic', text: '我努力学习主要是为了考个好成绩，让父母满意。', reverse: false },
+      { id: 7, dimensionId: 'extrinsic', text: '我会想象自己考上理想学校后的样子，这让我有动力。', reverse: false },
+      { id: 8, dimensionId: 'extrinsic', text: '如果考试取消了，我可能就不会这么努力学习了。', reverse: false },
+      { id: 9, dimensionId: 'extrinsic', text: '我学习是为了证明自己比别人强。', reverse: false },
+      { id: 10, dimensionId: 'extrinsic', text: '我觉得学习本身是有意义的，不完全是为了结果。', reverse: true },
+      { id: 11, dimensionId: 'goal-clarity', text: '我清楚自己想考哪所学校、什么专业。', reverse: false },
+      { id: 12, dimensionId: 'goal-clarity', text: '我制定了详细的复习计划，知道每天该做什么。', reverse: false },
+      { id: 13, dimensionId: 'goal-clarity', text: '我对未来的方向感到迷茫，不知道为什么而学。', reverse: true },
+      { id: 14, dimensionId: 'goal-clarity', text: '我能在学习时专注于目标，不容易被干扰。', reverse: false },
+      { id: 15, dimensionId: 'goal-clarity', text: '我会定期检查自己的学习进度，看离目标还有多远。', reverse: false },
+      { id: 16, dimensionId: 'self-efficacy', text: '我相信只要努力，就能学好任何一门课。', reverse: false },
+      { id: 17, dimensionId: 'self-efficacy', text: '遇到困难时，我会想办法解决，而不是放弃。', reverse: false },
+      { id: 18, dimensionId: 'self-efficacy', text: '我觉得自己不是学习那块料，再努力也没用。', reverse: true },
+      { id: 19, dimensionId: 'self-efficacy', text: '我能掌控自己的学习进度，而不是被动地被推着走。', reverse: false },
+      { id: 20, dimensionId: 'self-efficacy', text: '我相信自己的学习方法会越来越有效。', reverse: false }
+    ],
+    scoring: {
+      type: 'type',
+      reverseItems: [4, 10, 13, 18],
+      dimensions: [
+        { dimensionId: 'intrinsic', questionIds: [1, 2, 3, 4, 5], minScore: 5, maxScore: 25 },
+        { dimensionId: 'extrinsic', questionIds: [6, 7, 8, 9, 10], minScore: 5, maxScore: 25 },
+        { dimensionId: 'goal-clarity', questionIds: [11, 12, 13, 14, 15], minScore: 5, maxScore: 25 },
+        { dimensionId: 'self-efficacy', questionIds: [16, 17, 18, 19, 20], minScore: 5, maxScore: 25 }
+      ],
+      levels: null,
+      types: [
+        { id: 'intrinsic-driven', name: '内驱型', tagline: '学习对你而言是一种享受', description: '你的内在动机得分最高，学习对你而言本身就是有意义的', dominantDimension: 'intrinsic', color: '#27AE60' },
+        { id: 'mixed', name: '混合型', tagline: '内外动力均衡，健康稳定', description: '你的内外动机比较均衡，这是最健康的动力结构', condition: 'balanced', color: '#3498DB' },
+        { id: 'goal-oriented', name: '目标导向型', tagline: '为目标而战，全力以赴', description: '你的外在动机和目标清晰度较高，为目标而努力是你的动力', dominantDimensions: ['extrinsic', 'goal-clarity'], color: '#F39C12' },
+        { id: 'confused', name: '迷茫型', tagline: '动力不足，需要找到方向', description: '各维度得分均较低，缺乏明确的学习动力来源', condition: 'all-low', color: '#E74C3C' }
+      ],
+      typeRules: {
+        intrinsicDriven: '内在动机≥18分',
+        goalOriented: '外在动机≥15 且 目标清晰度≥15',
+        confused: '总分≤45 或 四维度均≤12',
+        mixed: '其他情况'
+      },
+      attachmentRules: null
+    },
+    freeResult: {
+      summaryTemplate: '你的学习动力类型为{{typeName}}——{{tagline}}。',
+      highlights: ['你得分最高的维度是{{strongestDimension}}（{{strongestScore}}分）', '你得分最低的维度是{{weakestDimension}}（{{weakestScore}}分）']
+    },
+    paidReports: {
+      'intrinsic-driven': {
+        title: '内驱型——学习对你而言是一种享受',
+        yourAnxietySays: '你的动力来自内心。你不是为了考试而学，而是因为学习本身让你感到充实和满足。这种动力是最持久的，因为它不依赖于外部条件。',
+        dimensionAnalysis: '内在动机（高）：你对知识本身有强烈的好奇心和热爱，这是最宝贵的学习品质。|外在动机（中）：你有适度的外在动机作为补充，但不会过度依赖。|目标清晰度（中）：你对未来有一定的规划，但不会被目标绑架。|自我效能感（中）：你对自己的学习能力有基本的信心。',
+        lifeScenes: '你会主动翻看课本后面的拓展内容，因为觉得有趣|做对一道难题后，你会感到发自内心的开心|你会主动和同学讨论课堂上学到的东西',
+        positiveSide: '内驱型是学习动力中最健康的状态。你不容易被外界波动影响，学习的意义在你自己心里。',
+        actions: '继续保持对知识的好奇心，但也要适当关注考试成绩作为反馈|可以尝试把你的学习方法分享给同学，教别人是最好的学|设定一些有挑战性的学习目标，让自己的能力进一步提升',
+        psychKnowledge: '自我决定理论指出，内在动机源于三种基本心理需要的满足：自主感（我觉得是自己在选择）、胜任感（我觉得自己能做好）、归属感（我觉得被接纳）。当这三种需要被满足时，内在动机会自然产生。',
+        counselorNote: '你拥有最珍贵的学习品质——内在动力。但请记住，有时候外在目标也是合理的，不必完全排斥。保持这份热爱，它会带你去更远的地方。',
+        cta: '解锁完整深度报告，让你的学习动力更上一层楼'
+      },
+      'mixed': {
+        title: '混合型——内外动力均衡，健康稳定',
+        yourAnxietySays: '你的学习动力来自内外的平衡。你既能在学习中找到乐趣，也能为目标而努力。这是最健康的动力结构，既有方向感，又有持久性。',
+        dimensionAnalysis: '内在动机（中）：你有一定的学习兴趣，但不会完全依赖它。|外在动机（中）：你重视成绩和目标，但不会过度焦虑。|目标清晰度（中）：你对未来有基本的方向，但保留一定的灵活性。|自我效能感（中）：你对自己的能力有合理的估计。',
+        lifeScenes: '有时候你会因为一道有趣的题而投入，有时候你也会为目标而逼自己一把|你能平衡学习和休息，不会走极端|你的学习状态比较稳定，不会大起大落',
+        positiveSide: '混合型是最可持续的学习状态。你既有热爱的部分，也有务实的部分，不会因为一个缺失而崩溃。',
+        actions: '记录一下哪些学习内容让你真正感到有趣，有意识地多接触这些内容|设定一个"小目标"，在完成时给自己一些小奖励|和朋友聊聊学习以外的兴趣爱好，保持生活的丰富性',
+        psychKnowledge: '研究表明，完全的内在动机虽然理想，但在应试教育环境下难以完全实现。混合型动机是最务实的状态——既有热爱的部分，也有责任的部分，两者相互支撑。',
+        counselorNote: '你找到了很好的平衡。继续保持这种状态，既能享受学习，也能为目标奋斗。中高考只是人生的一站，你的动力结构会让你在任何阶段都能稳步前进。',
+        cta: '解锁完整深度报告，优化你的学习动力组合'
+      },
+      'goal-oriented': {
+        title: '目标导向型——为目标而战，全力以赴',
+        yourAnxietySays: '你的动力主要来自外在目标——好成绩、好学校、父母的认可。这没有错，但要注意：当目标变得模糊或受阻时，你的动力可能会动摇。',
+        dimensionAnalysis: '内在动机（较低）：你对学习本身的兴趣可能不够强，更多是"为了什么而学"。|外在动机（高）：成绩、排名、父母的满意是你主要的动力来源。|目标清晰度（高）：你对目标很明确，知道自己要什么。|自我效能感（中）：你相信努力会有回报。',
+        lifeScenes: '你会为了考试而熬夜，但考完就觉得空虚|父母的一句批评会让你很受打击|你的学习状态和成绩起伏关联很大',
+        positiveSide: '目标导向型的学生有强大的执行力。你清楚自己要什么，并且愿意为之付出努力。这是很多成功人士的共同特点。',
+        actions: '尝试找到学习中真正让你感兴趣的部分，哪怕只有一点点|设定一些过程性的小目标，不只是分数目标|学会从学习过程中获得满足感，而不只是从结果中获得',
+        psychKnowledge: '外在动机的问题在于它的"外部性"——当外部条件变化时，动力就会波动。最好的做法是逐步把外在目标内化，问自己："这个目标对我意味着什么？"',
+        counselorNote: '为目标而努力是值得尊敬的。但请记住，目标是你的，学习也是你的。在追求目标的过程中，也要学会享受学习的乐趣，这样你的动力会更稳定、更持久。',
+        cta: '解锁完整深度报告，让你的动力更稳定持久'
+      },
+      'confused': {
+        title: '迷茫型——动力不足，需要找到方向',
+        yourAnxietySays: '你现在可能感到学习很累、很没意思，不知道为什么而学。这种状态不是你的错，而是你的动力系统需要被重新激活。',
+        dimensionAnalysis: '内在动机（低）：你可能很久没有在学习中感到快乐了。|外在动机（低）：你可能对成绩和目标也感到麻木。|目标清晰度（低）：你对未来感到迷茫，不知道自己的方向。|自我效能感（低）：你可能怀疑自己的学习能力。',
+        lifeScenes: '坐在书桌前很久，却不知道从哪里开始|看到别人努力学习，你会感到焦虑但自己又动不起来|你觉得学习好像没什么意义',
+        positiveSide: '迷茫本身也是一种信号——它在告诉你，现在的学习方式或目标可能不适合你。这是改变的起点。',
+        actions: '试着找到一节你觉得稍微有意思的课，多花一点时间在这上面|找一个你信任的人聊聊，说说你对学习和未来的困惑|给自己设定一个很小的目标，比如今天认真做对3道题',
+        psychKnowledge: '动力缺失往往是"意义缺失"的表现。心理学家维克多·弗兰克尔说："人可以被剥夺一切，但无法被剥夺选择自己态度的自由。"找回动力的第一步，是找到学习对你的个人意义。',
+        counselorNote: '你现在可能觉得很难，但请相信，这种状态是可以改变的。迷茫不是终点，而是重新选择的起点。也许你需要换一种学习方式，也许你需要找到更适合自己的目标。不要放弃寻找，我们愿意陪你一起。',
+        cta: '解锁完整深度报告，帮你找到属于你的学习方向'
+      }
+    },
+    marketingNotes: [
+      { type: '痛点型', title: '学习没动力？测测你的动力来源到底是什么', content: '每天逼自己坐在桌前，却总是学不进去？可能是你的动力来源出了问题。内驱型、目标导向型、混合型、迷茫型——你是哪种？5分钟测出你的学习动力类型。', tags: ['学习动力', '中高考', '备考心理'] },
+      { type: '场景型', title: '为什么别人学得开心，你却总是要逼自己？', content: '同样是备考，有人乐在其中，有人痛苦煎熬。差别不在智商，在动力来源。测测你的学习动力类型，找到最适合你的备考方式。', tags: ['备考方法', '学习效率', '中高考'] },
+      { type: '数据型', title: '研究发现：内驱型学生成绩更稳定', content: '研究发现，以内在兴趣为主的学生，学习成绩更稳定、持续性更强。测测你的学习动力类型，看看你有多少"内驱力"。', tags: ['学习研究', '内在动机', '学业表现'] }
+    ]
+  },
+
+  // ========== 测评5：考试焦虑程度评估 ==========
+  {
+    id: 'exam-anxiety',
+    name: '考试焦虑程度评估',
+    subtitle: '测测你的考前心理状态',
+    duration: '约5-8分钟',
+    questionCount: 20,
+    price: '19.9',
+    priceLabel: '免费获取焦虑等级，19.9元解锁应对方案',
+    icon: '📝',
+    tags: ['中高考', '考试焦虑', '备考心理'],
+    description: '考前失眠、心慌、大脑空白？20道题测出你的考试焦虑程度，找到有效的应对策略。',
+    theoryBasis: '基于Spielberger考试焦虑量表（TAI）与认知-行为焦虑模型',
+    targetAudience: '中高考学生，尤其是考前出现明显焦虑症状的学生',
+    intro: '以下20道题，请根据你最近一个月的真实感受作答。没有对错，只有你的真实状态。',
+    dimensions: [
+      {
+        id: 'cognitive',
+        name: '认知焦虑',
+        description: '你对考试结果的过度担忧',
+        theoryNote: '认知焦虑表现为对失败的恐惧和对结果的灾难化预测，是考试焦虑中最影响表现的因素。'
+      },
+      {
+        id: 'physiological',
+        name: '生理焦虑',
+        description: '考前身体反应如失眠、心悸',
+        theoryNote: '生理焦虑是身体对压力的反应，适度的生理唤醒有助于警觉，但过度会影响考试发挥。'
+      },
+      {
+        id: 'behavioral',
+        name: '行为焦虑',
+        description: '逃避复习、拖延等行为',
+        theoryNote: '行为焦虑表现为回避与考试相关的情境，如拖延复习、逃避模拟考等，是一种应对焦虑的方式。'
+      },
+      {
+        id: 'coping',
+        name: '应对效能',
+        description: '应对考试焦虑的信心',
+        theoryNote: '应对效能反映个体相信自己能够有效管理考试焦虑的程度，是考试焦虑的保护因素。'
+      }
+    ],
+    questions: [
+      { id: 1, dimensionId: 'cognitive', text: '考试前我总是担心自己会考砸。', reverse: false },
+      { id: 2, dimensionId: 'cognitive', text: '我会想象各种考不好的后果，越想越害怕。', reverse: false },
+      { id: 3, dimensionId: 'cognitive', text: '考试时我会担心时间不够用，越想越紧张。', reverse: false },
+      { id: 4, dimensionId: 'cognitive', text: '我会担心自己复习的内容都不考，考的内容都没复习。', reverse: false },
+      { id: 5, dimensionId: 'cognitive', text: '我对考试结果有合理的期待，不会过度担忧。', reverse: true },
+      { id: 6, dimensionId: 'physiological', text: '考试前一晚我经常睡不着或睡不好。', reverse: false },
+      { id: 7, dimensionId: 'physiological', text: '考试前我会心跳加速、手心出汗。', reverse: false },
+      { id: 8, dimensionId: 'physiological', text: '考试前我会胃不舒服或食欲下降。', reverse: false },
+      { id: 9, dimensionId: 'physiological', text: '考试前我会头痛或身体发紧。', reverse: false },
+      { id: 10, dimensionId: 'physiological', text: '考试前我的身体状态和平常差不多。', reverse: true },
+      { id: 11, dimensionId: 'behavioral', text: '考试临近时我会逃避复习，去看手机或做其他事。', reverse: false },
+      { id: 12, dimensionId: 'behavioral', text: '我会拖延到最后一刻才开始复习。', reverse: false },
+      { id: 13, dimensionId: 'behavioral', text: '考试前我会找借口不去参加模拟考或自习。', reverse: false },
+      { id: 14, dimensionId: 'behavioral', text: '我会假装不在意考试，其实心里很紧张。', reverse: false },
+      { id: 15, dimensionId: 'behavioral', text: '我能够按计划复习，不会逃避。', reverse: true },
+      { id: 16, dimensionId: 'coping', text: '我相信自己有能力应对考试带来的压力。', reverse: false },
+      { id: 17, dimensionId: 'coping', text: '考试紧张时，我知道怎么让自己平静下来。', reverse: false },
+      { id: 18, dimensionId: 'coping', text: '我有一些有效的方法来缓解考试焦虑。', reverse: false },
+      { id: 19, dimensionId: 'coping', text: '面对考试，我感到无助，不知道该怎么办。', reverse: true },
+      { id: 20, dimensionId: 'coping', text: '我相信充分的准备可以减少我的考试焦虑。', reverse: false }
+    ],
+    scoring: {
+      type: 'level',
+      reverseItems: [5, 10, 15, 19],
+      dimensions: [
+        { dimensionId: 'cognitive', questionIds: [1, 2, 3, 4, 5], minScore: 5, maxScore: 25 },
+        { dimensionId: 'physiological', questionIds: [6, 7, 8, 9, 10], minScore: 5, maxScore: 25 },
+        { dimensionId: 'behavioral', questionIds: [11, 12, 13, 14, 15], minScore: 5, maxScore: 25 },
+        { dimensionId: 'coping', questionIds: [16, 17, 18, 19, 20], minScore: 5, maxScore: 25 }
+      ],
+      levels: [
+        { id: 'A', name: '高度焦虑', min: 70, max: 100, color: '#E74C3C' },
+        { id: 'B', name: '中度焦虑', min: 50, max: 69, color: '#F39C12' },
+        { id: 'C', name: '轻度焦虑', min: 30, max: 49, color: '#F1C40F' },
+        { id: 'D', name: '状态良好', min: 20, max: 29, color: '#27AE60' }
+      ],
+      types: null,
+      attachmentRules: null
+    },
+    freeResult: {
+      summaryTemplate: '你的考试焦虑程度为{{levelName}}（{{levelId}}级），总分{{totalScore}}分。',
+      highlights: ['你最需要关注的是{{weakestDimension}}', '你的{{strongestDimension}}相对较好']
+    },
+    paidReports: {
+      A: {
+        title: '高度焦虑——你的压力需要被看见',
+        evaluation: '先深呼吸一下。看到这个结果，你可能会有些担心，但我想告诉你：你能来做这个测评，本身就说明你还没有放弃。高度焦虑不是你的问题，而是你的压力已经超过了一个人该承受的分量。',
+        dimensionAnalysis: '认知焦虑（高）：你可能在脑海中反复预演各种"考砸"的场景，这些想象消耗了你大量的精力。|生理焦虑（高）：你的身体在发出警报——失眠、心悸、胃不舒服，这些都是压力超载的信号。|行为焦虑（高）：你可能通过拖延、逃避来暂时缓解焦虑，但这会让问题更严重。|应对效能（低）：你可能不相信自己能处理好考试压力，感到无助。',
+        lifeScenes: '考试前一晚躺在床上翻来覆去，怎么也睡不着|考试时手心出汗、心跳加速，大脑一片空白|明明知道要复习，却一直刷手机拖延',
+        actions: '学习"方块呼吸法"：吸气4秒、屏息4秒、呼气4秒、屏息4秒，重复5次。每天练习，考前使用。|写下你担心的所有"最坏结果"，然后对每个结果写下"如果真的发生，我可以怎么做"。|找一个人倾诉你的压力——父母、老师、朋友，不要一个人扛。',
+        psychKnowledge: '耶克斯-多德森定律指出，适度的焦虑有助于发挥，但过高的焦虑会严重损害表现。你的焦虑水平已经超过了"适度"的范围，需要主动干预。',
+        counselorNote: '你现在的焦虑不是你的问题，而是你的身体和心理在保护你。请允许自己感到紧张，也允许自己寻求帮助。你值得被支持，也值得在中高考中发挥出真实的水平。',
+        cta: '解锁完整应对方案，帮你降低焦虑、稳定发挥'
+      },
+      B: {
+        title: '中度焦虑——适度紧张是正常的',
+        evaluation: '你的焦虑水平在中度范围内，这是大多数考生的状态。适度的紧张可以帮助你保持警觉，但需要注意不要让它继续升级。',
+        dimensionAnalysis: '认知焦虑（中）：你会担心考试结果，但还不会被担忧完全占据。|生理焦虑（中）：你的身体有一些压力反应，但还在可控范围内。|行为焦虑（中）：你偶尔会拖延或逃避，但大体上能按计划复习。|应对效能（中）：你有一些应对焦虑的方法，但可能还不够系统。',
+        lifeScenes: '考试前会紧张，但进场后能慢慢进入状态|偶尔会失眠，但大部分时候睡眠还可以|有一些让自己放松的方法，但有时候不太管用',
+        actions: '建立一套固定的考前准备流程，包括睡眠、饮食、复习节奏，减少不确定性。|练习正念冥想：每天5分钟，关注当下的呼吸和感受，减少对未来的担忧。|给自己设定"焦虑时间"：每天固定15分钟允许自己担心，时间到就停止。',
+        psychKnowledge: '研究表明，对焦虑的态度比焦虑本身更重要。接受"我有点紧张是正常的"，反而能减少焦虑的负面影响。',
+        counselorNote: '你正在一个正常的轨道上。中度焦虑不会阻止你发挥，只要你学会和它共处。相信自己，你已经准备得很好了。',
+        cta: '解锁完整应对方案，让焦虑成为你的动力'
+      },
+      C: {
+        title: '轻度焦虑——你有一定的自我调节能力',
+        evaluation: '你的焦虑水平较低，这说明你有较好的心理调节能力。保持这份从容，同时不要完全放松警惕。',
+        dimensionAnalysis: '认知焦虑（低）：你对考试有合理的期待，不会过度担忧。|生理焦虑（低）：你的身体状态比较稳定，压力反应不明显。|行为焦虑（低）：你能够按计划行动，不会逃避。|应对效能（中高）：你相信自己能应对考试，这种自信是有力量的。',
+        lifeScenes: '考试前能正常休息，睡眠质量不错|考试时能集中注意力，不会被紧张干扰|有自己的复习节奏，不会轻易被打乱',
+        actions: '继续保持现在的状态，不要刻意追求"完全不紧张"。|注意考前一周的节奏调整，避免临时改变作息。|可以把你调节状态的方法记录下来，考试当天使用。',
+        psychKnowledge: '完全没有焦虑并不一定是好事——适度的唤醒水平有助于警觉和专注。你现在处于一个健康的状态。',
+        counselorNote: '你已经找到了适合自己的节奏。保持这份从容，相信自己的准备。你的状态本身就是最好的竞争力。',
+        cta: '解锁完整应对方案，保持最佳考试状态'
+      },
+      D: {
+        title: '状态良好——保持这份从容',
+        evaluation: '你的焦虑水平很低，这说明你的心理状态很好。你可能有很强的自信心，或者你已经做好了充分的准备。',
+        dimensionAnalysis: '认知焦虑（低）：你对考试没有过度的担忧，心态平和。|生理焦虑（低）：你的身体状态稳定，没有明显的压力反应。|行为焦虑（低）：你能够积极面对考试，不会逃避。|应对效能（高）：你对自己应对考试的能力很有信心。',
+        lifeScenes: '考试前能正常复习和休息，不会受到影响|考试时能冷静思考，发挥正常水平|对考试有正向期待，把它当作一次检验',
+        actions: '继续保持现在的节奏和心态，不要刻意改变。|考前一周避免尝试新事物，保持稳定的作息。|给自己一些正向的心理暗示，巩固这份自信。',
+        psychKnowledge: '低焦虑、高自信的状态是最佳考试状态。这种状态通常来自充分的准备和积极的自我对话。',
+        counselorNote: '你已经拥有了最好的考试状态。保持这份从容和自信，相信自己的能力。考试只是检验，你已经准备好了。',
+        cta: '解锁完整应对方案，巩固最佳状态'
+      }
+    },
+    marketingNotes: [
+      { type: '痛点型', title: '考前失眠、心慌、大脑空白？你的焦虑可能在"超标"', content: '距离考试还有一周，你已经睡不着了？20道题测出你的考试焦虑程度，找到有效的应对策略。', tags: ['考试焦虑', '考前失眠', '中高考'] },
+      { type: '场景型', title: '一进考场就大脑空白？可能是考试焦虑在作祟', content: '明明复习了很久，考试时却什么都想不起来？这不是你不够努力，是焦虑在干扰你的大脑。5分钟测一测你的焦虑程度。', tags: ['考场焦虑', '大脑空白', '备考心理'] },
+      { type: '数据型', title: '研究表明：适度紧张有助于发挥，但"这个程度"就过头了', content: '心理学家发现，焦虑和考试表现呈倒U型关系。测测你的焦虑在哪个位置，是动力还是阻力？', tags: ['焦虑研究', '考试表现', '心理学'] }
+    ]
+  },
+
+  // ========== 测评6：家庭教育风格评估 ==========
+  {
+    id: 'parenting-style',
+    name: '家庭教育风格评估',
+    subtitle: '你的教养方式，正在塑造怎样的孩子',
+    duration: '约5-8分钟',
+    questionCount: 20,
+    price: '9.9',
+    priceLabel: '免费获取教养类型，9.9元解锁优化方案',
+    icon: '👨‍👩‍👧',
+    tags: ['家庭教育', '亲子关系', '教养风格'],
+    description: '权威型、专制型、溺爱型还是忽视型？20道题测出你的教养风格，了解对孩子成长的影响。',
+    theoryBasis: '基于Baumrind教养风格理论（响应度×要求度二维矩阵）',
+    targetAudience: '家长或青少年评估父母的教养风格',
+    intro: '以下20道题，请根据你（或你父母）在日常教养中的真实情况作答。如果你是家长，请根据自己对待孩子的方式作答；如果你是青少年，请根据父母对待你的方式作答。',
+    dimensions: [
+      {
+        id: 'responsiveness',
+        name: '响应度',
+        description: '对孩子的情感回应和支持',
+        theoryNote: '响应度反映父母对孩子需求的敏感性和回应程度，高响应的父母能够理解并满足孩子的情感需要。'
+      },
+      {
+        id: 'demandingness',
+        name: '要求度',
+        description: '对孩子的行为要求和管控',
+        theoryNote: '要求度反映父母对孩子行为的期望和监管程度，高要求的父母会设定明确的规则和标准。'
+      }
+    ],
+    questions: [
+      { id: 1, dimensionId: 'responsiveness', text: '当孩子情绪低落时，我会耐心倾听并给予安慰。', reverse: false },
+      { id: 2, dimensionId: 'responsiveness', text: '我会花时间了解孩子的兴趣和想法。', reverse: false },
+      { id: 3, dimensionId: 'responsiveness', text: '当孩子犯错时，我会先了解原因而不是直接批评。', reverse: false },
+      { id: 4, dimensionId: 'responsiveness', text: '我会鼓励孩子表达自己的意见，即使与我不同。', reverse: false },
+      { id: 5, dimensionId: 'responsiveness', text: '我对孩子的情感需求不太敏感，觉得孩子应该自己处理。', reverse: true },
+      { id: 6, dimensionId: 'responsiveness', text: '我经常表扬和鼓励孩子。', reverse: false },
+      { id: 7, dimensionId: 'responsiveness', text: '孩子遇到困难时，我会给予支持而不是指责。', reverse: false },
+      { id: 8, dimensionId: 'responsiveness', text: '我觉得孩子的感受不重要，重要的是听话。', reverse: true },
+      { id: 9, dimensionId: 'responsiveness', text: '我会尽量满足孩子的合理需求。', reverse: false },
+      { id: 10, dimensionId: 'responsiveness', text: '我和孩子之间的交流比较少，不太了解TA的内心世界。', reverse: true },
+      { id: 11, dimensionId: 'demandingness', text: '我对孩子的学习和行为有明确的要求和标准。', reverse: false },
+      { id: 12, dimensionId: 'demandingness', text: '我会监督孩子完成作业和任务。', reverse: false },
+      { id: 13, dimensionId: 'demandingness', text: '孩子违反规则时，会有相应的后果。', reverse: false },
+      { id: 14, dimensionId: 'demandingness', text: '我很少对孩子提出要求，觉得孩子开心就好。', reverse: true },
+      { id: 15, dimensionId: 'demandingness', text: '我会帮孩子规划学习和生活，但也会听取TA的意见。', reverse: false },
+      { id: 16, dimensionId: 'demandingness', text: '我对孩子的管束很严格，不允许任何越界行为。', reverse: false },
+      { id: 17, dimensionId: 'demandingness', text: '我觉得孩子应该完全按照我的要求做事。', reverse: false },
+      { id: 18, dimensionId: 'demandingness', text: '我很少检查孩子的作业和学习情况。', reverse: true },
+      { id: 19, dimensionId: 'demandingness', text: '我对孩子做的事情基本上不管不问。', reverse: true },
+      { id: 20, dimensionId: 'demandingness', text: '我会在孩子犯错后帮助TA反思和改正，而不是简单地惩罚。', reverse: false }
+    ],
+    scoring: {
+      type: 'type',
+      reverseItems: [5, 8, 10, 14, 18, 19],
+      dimensions: [
+        { dimensionId: 'responsiveness', questionIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], minScore: 1.0, maxScore: 5.0 },
+        { dimensionId: 'demandingness', questionIds: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20], minScore: 1.0, maxScore: 5.0 }
+      ],
+      levels: null,
+      types: null,
+      styleRules: {
+        description: '基于响应度和要求度的二维得分判定教养风格',
+        midpoint: 3.0,
+        responsivenessDimensionId: 'responsiveness',
+        demandingnessDimensionId: 'demandingness',
+        scoreFormula: '每个维度得分 = 该维度10道题得分之和 ÷ 10，范围1.0-5.0',
+        rules: [
+          { typeId: 'authoritative', name: '权威型', tagline: '高响应高要求，最理想的教养方式', condition: 'R > 3.0 且 D > 3.0', responsivenessCondition: '> 3.0', demandingnessCondition: '> 3.0', color: '#27AE60' },
+          { typeId: 'authoritarian', name: '专制型', tagline: '低响应高要求，严格管控', condition: 'R ≤ 3.0 且 D > 3.0', responsivenessCondition: '≤ 3.0', demandingnessCondition: '> 3.0', color: '#E74C3C' },
+          { typeId: 'permissive', name: '溺爱型', tagline: '高响应低要求，自由放任', condition: 'R > 3.0 且 D ≤ 3.0', responsivenessCondition: '> 3.0', demandingnessCondition: '≤ 3.0', color: '#F39C12' },
+          { typeId: 'neglectful', name: '忽视型', tagline: '低响应低要求，情感缺位', condition: 'R ≤ 3.0 且 D ≤ 3.0', responsivenessCondition: '≤ 3.0', demandingnessCondition: '≤ 3.0', color: '#9B59B6' }
+        ]
+      },
+      attachmentRules: null
+    },
+    freeResult: {
+      summaryTemplate: '你的教养风格为{{typeName}}——{{tagline}}。',
+      highlights: ['你的响应度得分为{{responsivenessScore}}', '你的要求度得分为{{demandingnessScore}}']
+    },
+    paidReports: {
+      authoritative: {
+        title: '权威型——高响应高要求，最理想的教养方式',
+        yourStyle: '你的教养风格属于权威型，这是心理学研究公认的最有利于孩子成长的教养方式。你对孩子有足够的关爱和回应，同时也有合理的规则和期望。孩子在这样的环境中，既能感受到被爱，也能学会自律。',
+        loveLanguage: '你表达爱的方式是温暖而有力量的。你会倾听孩子的想法，给予情感支持；同时也会设定边界，帮助孩子建立正确的行为习惯。你的爱不是溺爱，而是有原则的关爱。',
+        relationshipPattern: '孩子愿意和你分享TA的烦恼和秘密|你们会讨论规则，孩子理解这些规则的意义|孩子犯错时，你会帮助TA反思，而不是简单地惩罚',
+        bestPartner: '权威型的教养方式能培养出自信、自律、有责任感的孩子。孩子在这样的家庭中长大，更容易形成安全型依恋，在学业和社交方面表现更好。',
+        traps: '过度完美主义：你可能对自己要求很高，有时候会感到疲惫。|过度控制：确保你的规则是合理的，给孩子一定的自主空间。|忽视自己的需求：记住，照顾好自己也是对孩子负责。',
+        actions: '继续保持这种平衡的教养方式，同时给孩子越来越多自主决定的机会|定期和孩子进行"家庭会议"，让TA参与一些家庭决策|给自己留一些放松的时间，只有状态好的父母才能给孩子最好的陪伴',
+        psychKnowledge: 'Baumrind的研究发现，权威型父母养育的孩子在学业成绩、社交能力、自尊水平等方面都表现最好。这种教养方式平衡了"爱"和"规则"，是孩子健康成长的最佳土壤。',
+        counselorNote: '你已经做得很好了。继续相信孩子，给TA足够的空间去探索和犯错，同时保持你在身边的温暖和支持。你正在培养一个健康、自信的孩子。',
+        cta: '解锁完整优化方案，让权威型教养更上一层楼'
+      },
+      authoritarian: {
+        title: '专制型——低响应高要求，严格管控',
+        yourStyle: '你的教养风格属于专制型，你对孩子有很高的期望和严格的要求，但在情感回应方面可能有所欠缺。孩子可能觉得你很严厉，不太理解TA的内心世界。',
+        loveLanguage: '你可能通过"严格要求"来表达对孩子的爱和期望。你相信"不打不成器"，希望孩子能在压力下成长。但孩子可能感受不到你的爱，只感受到你的要求。',
+        relationshipPattern: '孩子可能不太愿意和你分享内心的想法|你们之间的交流可能更多是"命令-服从"模式|孩子可能表现得听话，但内心有压抑的不满',
+        bestPartner: '专制型教养的孩子可能在学业上表现不错，但可能在社交能力、自主性和创造力方面受限。孩子也可能发展出焦虑、自卑等心理问题。',
+        traps: '孩子表面服从、内心叛逆：青春期的反弹可能很激烈。|亲子关系疏远：孩子可能不愿意和你沟通真实想法。|孩子缺乏自主性：习惯了被安排，不知道自己想要什么。',
+        actions: '尝试每天花10分钟听孩子说说TA的想法，不评判、不给建议，只是倾听|在规则之外，给孩子一些选择的空间|当孩子做得好时，给予真诚的表扬，让孩子感受到你的认可',
+        psychKnowledge: '研究表明，专制型教养下的孩子往往学业成绩还不错，但自尊水平较低，社交能力较弱，容易产生焦虑和抑郁。长期来看，这种教养方式可能会损害亲子关系。',
+        counselorNote: '你爱孩子的心毋庸置疑，但方式可能需要调整。严格的背后是你的期望，但别忘了孩子也是一个独立的个体。多一些理解，少一些控制，孩子会更愿意和你亲近。',
+        cta: '解锁完整优化方案，改善亲子沟通'
+      },
+      permissive: {
+        title: '溺爱型——高响应低要求，自由放任',
+        yourStyle: '你的教养风格属于溺爱型，你非常关爱孩子，愿意满足TA的需求，但对孩子的行为缺乏明确的规则和界限。孩子可能觉得你很开明，但也可能感到缺乏方向。',
+        loveLanguage: '你用"满足需求"来表达爱，孩子想要什么你都会尽量给。你的出发点是爱，但孩子可能学不会延迟满足和自我约束。',
+        relationshipPattern: '孩子和你很亲近，愿意和你分享想法|你可能很难对孩子说"不"|孩子可能习惯了被满足，遇到挫折时不知所措',
+        bestPartner: '溺爱型教养的孩子往往和父母关系亲密，但可能在自律性、责任感和抗挫折能力方面较弱。孩子可能习惯了"想要就有"，在社会中遇到挫折时会感到不适应。',
+        traps: '孩子缺乏规则意识：在学校和社会可能不适应规则。|孩子缺乏自制力：习惯了即时满足，很难坚持做困难的事。|孩子可能不尊重你：习惯了被满足，不懂得感恩。',
+        actions: '设立一些基本的家庭规则，如作业时间、电子产品使用时间等|当孩子违反规则时，温和但坚定地执行后果|学会对孩子说"不"，并解释原因',
+        psychKnowledge: '研究发现，溺爱型教养下的孩子往往自我控制能力较弱，可能表现出任性、依赖性强、缺乏责任感等特点。适度的规则和界限对孩子的成长非常重要。',
+        counselorNote: '你给孩子的爱是充足的，这很好。但爱不只是满足，还包括引导。孩子需要在爱的环境中学会边界和责任，这样TA才能真正成长。',
+        cta: '解锁完整优化方案，让爱有边界'
+      },
+      neglectful: {
+        title: '忽视型——低响应低要求，情感缺位',
+        yourStyle: '你的教养风格属于忽视型，你对孩子的情感需求和行为都关注较少。孩子可能感觉不到你的关心，在成长中缺乏必要的支持和引导。',
+        loveLanguage: '你可能忙于工作或其他事情，没有太多精力投入到教养孩子上。这不是因为你不在乎，而是你可能需要更多的支持和资源。',
+        relationshipPattern: '孩子可能习惯了独处，不太依赖你|你们之间的交流可能很少|孩子可能需要自己解决大部分问题',
+        bestPartner: '忽视型教养对孩子的发展最为不利。孩子可能缺乏安全感，自尊水平低，在学业和社交方面都可能遇到困难。',
+        traps: '孩子缺乏安全感：感觉没有人真正关心自己。|孩子可能过早独立：失去了被保护和引导的机会。|亲子关系淡漠：长大后可能不愿意和你亲近。',
+        actions: '每天花15分钟和孩子聊天，问问TA今天过得怎么样|关注孩子的学习和生活，了解TA在学校的情况|表达对孩子的关心，哪怕是一句"注意安全"或"今天辛苦了"',
+        psychKnowledge: '研究表明，忽视型教养对孩子的负面影响最大。孩子需要感受到被爱和被关注，这是健康成长的基础。即使很忙，一些小的关心也能产生巨大的影响。',
+        counselorNote: '如果你是因为生活的压力而无法给予孩子足够的关注，这可以理解。但请知道，你的关心对孩子来说是世界上最重要的东西。从今天开始，试着多关注一点，孩子会感受到。',
+        cta: '解锁完整优化方案，重建亲子连接'
+      }
+    },
+    marketingNotes: [
+      { type: '数据型', title: '研究显示，权威型教养的孩子更自信、学业更好', content: '你的教养方式，正在塑造怎样的孩子？权威型、专制型、溺爱型还是忽视型？9.9元测一测。', tags: ['家庭教育', '教养风格', '亲子关系'] },
+      { type: '痛点型', title: '孩子不听话？可能是你的教养方式需要调整', content: '你对孩子是要求多还是关爱多？不同的教养风格，会培养出完全不同的孩子。测测你的教养类型。', tags: ['孩子不听话', '教养方式', '家庭沟通'] },
+      { type: '场景型', title: '孩子犯错时，你的第一反应暴露了你的教养风格', content: '是批评、倾听、放任还是忽视？不同的反应，决定了孩子未来怎么面对错误。5分钟测一测。', tags: ['孩子犯错', '教养风格', '家庭教育'] }
+    ]
+  },
+
+  // ========== 测评7：青少年自我成长评估 ==========
+  {
+    id: 'teen-growth',
+    name: '青少年自我成长评估',
+    subtitle: '测测你的成长状态，找到发展方向',
+    duration: '约5-8分钟',
+    questionCount: 20,
+    price: '9.9',
+    priceLabel: '免费获取成长等级，9.9元解锁成长方案',
+    icon: '🌱',
+    tags: ['青少年', '自我成长', '心理发展'],
+    description: '你的自我认知、情绪管理、目标感、社交能力发展得如何？20道题测出你的成长状态。',
+    theoryBasis: '基于青少年心理发展理论与积极心理学框架',
+    targetAudience: '青少年，尤其是对自我发展感兴趣的学生',
+    intro: '以下20道题，请根据你最近一个月的真实感受作答。没有对错，只有你的真实状态。',
+    dimensions: [
+      {
+        id: 'self-awareness',
+        name: '自我认知',
+        description: '对自己的了解和接纳程度',
+        theoryNote: '自我认知是青少年心理发展的核心任务，Erikson指出，青春期的关键冲突是"自我认同 vs 角色混乱"。'
+      },
+      {
+        id: 'emotion-management',
+        name: '情绪管理',
+        description: '情绪识别和调节能力',
+        theoryNote: '情绪管理能力在青少年期快速发展，Goleman指出，情商是决定一个人成功和幸福的重要因素。'
+      },
+      {
+        id: 'purpose',
+        name: '目标感',
+        description: '对未来的规划和追求',
+        theoryNote: '目标感是积极心理学的核心概念之一，Damon的研究发现，有清晰人生目标的青少年更有动力、更快乐。'
+      },
+      {
+        id: 'social-skills',
+        name: '社交能力',
+        description: '人际交往和沟通能力',
+        theoryNote: '社交能力是青少年发展的重要领域，良好的社交关系能促进心理健康，预防抑郁和焦虑。'
+      }
+    ],
+    questions: [
+      { id: 1, dimensionId: 'self-awareness', text: '我知道自己的优点和缺点是什么。', reverse: false },
+      { id: 2, dimensionId: 'self-awareness', text: '我能够接纳自己不完美的地方。', reverse: false },
+      { id: 3, dimensionId: 'self-awareness', text: '我清楚自己真正喜欢什么、不喜欢什么。', reverse: false },
+      { id: 4, dimensionId: 'self-awareness', text: '我经常觉得自己不够好，不如别人。', reverse: true },
+      { id: 5, dimensionId: 'self-awareness', text: '我能够真实地表达自己的想法和感受。', reverse: false },
+      { id: 6, dimensionId: 'emotion-management', text: '当我感到生气或难过时，我知道怎么让自己平静下来。', reverse: false },
+      { id: 7, dimensionId: 'emotion-management', text: '我能说出自己当下的情绪是什么。', reverse: false },
+      { id: 8, dimensionId: 'emotion-management', text: '我的情绪经常失控，让我很困扰。', reverse: true },
+      { id: 9, dimensionId: 'emotion-management', text: '我有一些有效的方法来处理压力。', reverse: false },
+      { id: 10, dimensionId: 'emotion-management', text: '我能够从挫折中恢复过来。', reverse: false },
+      { id: 11, dimensionId: 'purpose', text: '我对未来有比较清晰的目标和规划。', reverse: false },
+      { id: 12, dimensionId: 'purpose', text: '我知道自己想成为什么样的人。', reverse: false },
+      { id: 13, dimensionId: 'purpose', text: '我对未来感到迷茫，不知道该怎么办。', reverse: true },
+      { id: 14, dimensionId: 'purpose', text: '我每天都在为自己的目标而努力。', reverse: false },
+      { id: 15, dimensionId: 'purpose', text: '我相信自己可以实现想要的生活。', reverse: false },
+      { id: 16, dimensionId: 'social-skills', text: '我能够和不同类型的人相处。', reverse: false },
+      { id: 17, dimensionId: 'social-skills', text: '我有可以信任的朋友。', reverse: false },
+      { id: 18, dimensionId: 'social-skills', text: '我觉得和别人交往很困难，想要回避。', reverse: true },
+      { id: 19, dimensionId: 'social-skills', text: '我能够清晰地表达自己的观点。', reverse: false },
+      { id: 20, dimensionId: 'social-skills', text: '当我和别人有分歧时，我能够妥善处理。', reverse: false }
+    ],
+    scoring: {
+      type: 'level',
+      reverseItems: [4, 8, 13, 18],
+      dimensions: [
+        { dimensionId: 'self-awareness', questionIds: [1, 2, 3, 4, 5], minScore: 5, maxScore: 25 },
+        { dimensionId: 'emotion-management', questionIds: [6, 7, 8, 9, 10], minScore: 5, maxScore: 25 },
+        { dimensionId: 'purpose', questionIds: [11, 12, 13, 14, 15], minScore: 5, maxScore: 25 },
+        { dimensionId: 'social-skills', questionIds: [16, 17, 18, 19, 20], minScore: 5, maxScore: 25 }
+      ],
+      levels: [
+        { id: 'A', name: '快速成长期', min: 75, max: 100, color: '#27AE60' },
+        { id: 'B', name: '稳定成长期', min: 55, max: 74, color: '#3498DB' },
+        { id: 'C', name: '成长停滞期', min: 35, max: 54, color: '#F39C12' },
+        { id: 'D', name: '需要关注', min: 20, max: 34, color: '#E74C3C' }
+      ],
+      types: null,
+      attachmentRules: null
+    },
+    freeResult: {
+      summaryTemplate: '你的成长状态为{{levelName}}（{{levelId}}级），总分{{totalScore}}分。',
+      highlights: ['你的{{strongestDimension}}发展得最好', '你的{{weakestDimension}}需要更多关注']
+    },
+    paidReports: {
+      A: {
+        title: '快速成长期——你正在蓬勃发展',
+        evaluation: '恭喜你！你的成长状态非常好，你对自己有清晰的认知，能够管理情绪，有明确的目标，也能与他人建立良好的关系。继续保持！',
+        dimensionAnalysis: '自我认知（高）：你很了解自己，知道自己的优势和不足。|情绪管理（高）：你有良好的情绪调节能力，不会轻易被情绪左右。|目标感（高）：你对未来有清晰的方向，每天都在进步。|社交能力（高）：你有良好的人际关系，能够与人有效沟通。',
+        lifeScenes: '你每天都在学习新东西，感觉自己在成长|遇到困难时，你能冷静分析并解决问题|你有几个可以信任的朋友，相处愉快',
+        actions: '继续保持现在的状态，同时给自己设定更高的目标|尝试挑战一些舒适区以外的事情|把自己学到的东西分享给别人，教是最好的学',
+        psychKnowledge: '心理学家Carol Dweck发现，拥有"成长型思维"的人相信能力可以通过努力提升，这种心态本身就会促进成长。你已经具备了这种心态。',
+        counselorNote: '你正在经历一个美好的成长阶段。保持这份热情和自我觉察，你的人生会因为持续的成长而变得更加丰富。',
+        cta: '解锁完整成长方案，让你的成长更系统化'
+      },
+      B: {
+        title: '稳定成长期——稳步前进',
+        evaluation: '你的成长状态良好，你在自我认知、情绪管理、目标感和社交能力方面都有一定的基础。你正在稳步前进，继续保持！',
+        dimensionAnalysis: '自我认知（中高）：你对自己有一定的了解，但有些方面可能还需要探索。|情绪管理（中高）：你能够管理大部分情绪，但在极端情况下可能需要更多技巧。|目标感（中高）：你有一定的方向感，但可能还不够清晰。|社交能力（中高）：你能够与他人相处，但可能在某些情境下感到困难。',
+        lifeScenes: '你感觉自己每天都在进步，但有时候也会迷茫|大部分时候你能控制情绪，但有时候也会失控|你有一些朋友，但可能没有特别亲密的',
+        actions: '找出你目前最薄弱的维度，重点提升|记录你每天的成长，哪怕是很小的事情|找一个榜样，学习TA的优点',
+        psychKnowledge: '研究表明，稳定成长期的人如果能够有意识地提升薄弱环节，会更快地进入快速成长期。',
+        counselorNote: '你在一个很好的轨道上。继续前进，不要着急，成长的每一步都是有意义的。',
+        cta: '解锁完整成长方案，加速你的成长'
+      },
+      C: {
+        title: '成长停滞期——需要突破',
+        evaluation: '你可能感觉最近没有什么进步，或者对未来有些迷茫。这是成长过程中常见的状态，不是你的问题，而是你可能需要一些新的方法和方向。',
+        dimensionAnalysis: '自我认知（中低）：你对自己的了解可能还不够深入，容易受他人评价影响。|情绪管理（中低）：你在情绪管理方面可能需要更多技巧。|目标感（中低）：你对未来可能感到迷茫，不知道该往哪里走。|社交能力（中低）：你可能在社交方面感到一些困难。',
+        lifeScenes: '你可能觉得自己在原地踏步，没有进步|你可能经常感到焦虑或情绪低落|你可能觉得和朋友相处有些困难',
+        actions: '每天写日记，记录自己的感受和想法|找一个你信任的人聊聊你的困惑|设定一个小目标，哪怕只是"每天读10分钟书"',
+        psychKnowledge: '心理学家发现，成长的停滞往往是因为"舒适区陷阱"。你可能习惯了现在的状态，害怕改变。突破的方法是尝试新事物，哪怕是很小的改变。',
+        counselorNote: '停滞期不是终点，而是转折点。你可能需要一些新的方法和支持来突破现状。不要放弃自己，成长永远不晚。',
+        cta: '解锁完整成长方案，帮你突破停滞'
+      },
+      D: {
+        title: '需要关注——寻找支持',
+        evaluation: '你现在的状态可能需要一些关注和支持。这可能不是你的错，而是你可能正在经历一些困难。请记住，寻求帮助是一种勇气，不是软弱。',
+        dimensionAnalysis: '自我认知（低）：你可能不太了解自己，或者对自己有很多负面评价。|情绪管理（低）：你可能经常感到情绪失控，不知道怎么处理。|目标感（低）：你可能对未来感到很迷茫，甚至绝望。|社交能力（低）：你可能觉得很难与他人建立联系。',
+        lifeScenes: '你可能经常感到低落或焦虑|你可能觉得自己没有价值|你可能觉得没有人理解你',
+        actions: '找一个你信任的人（父母、老师、朋友）谈谈你的感受|如果情绪问题持续影响你的生活，考虑寻求专业帮助|每天做一件让自己感到一点点开心的事',
+        psychKnowledge: '当成长状态持续低迷时，可能是心理问题的信号。及时寻求帮助非常重要，专业的心理咨询可以帮助你走出困境。',
+        counselorNote: '你现在可能觉得很难，但请相信，这种状态是可以改变的。你不是一个人，有人愿意帮助你。迈出求助的第一步，就是改变的开始。',
+        cta: '解锁完整成长方案，帮你找到方向'
+      }
+    },
+    marketingNotes: [
+      { type: '场景型', title: '你是在成长，还是在原地踏步？', content: '有人每天都在进步，有人却感觉停滞不前。测测你的成长状态，找到你的发展方向。', tags: ['自我成长', '青少年', '心理发展'] },
+      { type: '痛点型', title: '不知道自己想要什么？可能是成长状态出了问题', content: '自我认知、情绪管理、目标感、社交能力——你的成长维度发展得如何？9.9元测一测。', tags: ['迷茫', '自我探索', '成长'] },
+      { type: '数据型', title: '研究：青少年期的成长状态影响一生', content: '心理学家发现，青少年期是自我发展的关键阶段。你的成长状态如何？5分钟测一测。', tags: ['青少年心理', '自我发展', '成长研究'] }
+    ]
   }
 ];

@@ -41,8 +41,11 @@ function calculateScore(assessmentId, answers) {
       sum += score;
     });
 
-    if (assessmentId === 'attachment') {
-      // 依附类型：维度分 = 10题之和 ÷ 10
+    // 维度分取平均的场景：attachment 和 parenting-style 使用均值
+    const needsAverage = dim.scoreType === 'average' ||
+                        scoring.scoreType === 'average' ||
+                        dim.questionIds.length === 10;
+    if (needsAverage) {
       dimensionScores[dim.dimensionId] = parseFloat((sum / dim.questionIds.length).toFixed(1));
     } else {
       dimensionScores[dim.dimensionId] = sum;
@@ -66,9 +69,9 @@ function calculateScore(assessmentId, answers) {
     });
   }
 
-  // 总分
+  // 总分（level-based 测评需要）
   let totalScore = 0;
-  if (assessmentId === 'resilience') {
+  if (scoring.type === 'level') {
     totalScore = Object.values(dimensionScores).reduce((s, v) => s + v, 0);
   }
 
@@ -91,86 +94,170 @@ function getLevel(assessmentId, scores) {
 
   const { scoring } = assessment;
 
-  if (assessmentId === 'resilience') {
+  // Level-based 测评（resilience, exam-anxiety, teen-growth）
+  if (scoring.type === 'level') {
     const level = scoring.levels.find(l => scores.totalScore >= l.min && scores.totalScore <= l.max);
     return { type: 'level', level, totalScore: scores.totalScore };
   }
 
-  if (assessmentId === 'anxiety') {
-    const dimEntries = scoring.dimensions.map(dim => ({
-      dimensionId: dim.dimensionId,
-      score: scores.dimensionScores[dim.dimensionId]
-    }));
-    dimEntries.sort((a, b) => b.score - a.score);
-
-    const maxScore = dimEntries[0].score;
-    const minScore = dimEntries[dimEntries.length - 1].score;
-
-    // 均衡型判定
-    if (maxScore - minScore <= 3) {
-      return {
-        type: 'anxiety',
-        subtype: 'balanced',
-        primary: null,
-        secondary: null,
-        label: '均衡型',
-        dimensionScores: scores.dimensionScores,
-        sortedDimensions: dimEntries
-      };
+  // Type-based 测评
+  if (scoring.type === 'type') {
+    // 二维矩阵判定（attachment, parenting-style）
+    if (scoring.attachmentRules) {
+      return getAttachmentStyleResult(assessment, scores, scoring.attachmentRules);
     }
-
-    // 双高型判定
-    if (dimEntries[0].score === dimEntries[1].score) {
-      return {
-        type: 'anxiety',
-        subtype: 'dualHigh',
-        primary: dimEntries[0],
-        secondary: dimEntries[1],
-        label: '双高型',
-        dimensionScores: scores.dimensionScores,
-        sortedDimensions: dimEntries
-      };
+    if (scoring.styleRules) {
+      return getParentingStyleResult(assessment, scores, scoring.styleRules);
     }
+    // 多维度类型判定（anxiety, study-motivation）
+    return getMultiTypeResult(assessment, scores);
+  }
 
-    // 常规判定
-    const primaryType = scoring.types.find(t => t.id === dimEntries[0].dimensionId);
-    const secondaryType = scoring.types.find(t => t.id === dimEntries[1].dimensionId);
+  return null;
+}
+
+/** 二维矩阵结果 - 依附类型 */
+function getAttachmentStyleResult(assessment, scores, rules) {
+  const aScore = scores.dimensionScores[rules.anxietyDimensionId];
+  const vScore = scores.dimensionScores[rules.avoidanceDimensionId];
+  const midpoint = rules.midpoint;
+  const aHigh = aScore > midpoint;
+  const vHigh = vScore > midpoint;
+
+  let rule;
+  if (!aHigh && !vHigh) rule = rules.rules.find(r => r.typeId === 'secure');
+  else if (aHigh && !vHigh) rule = rules.rules.find(r => r.typeId === 'anxious');
+  else if (!aHigh && vHigh) rule = rules.rules.find(r => r.typeId === 'avoidant');
+  else rule = rules.rules.find(r => r.typeId === 'fearful');
+
+  return {
+    type: 'attachment',
+    attachmentType: rule,
+    anxietyScore: aScore,
+    avoidanceScore: vScore,
+    subDimensionScores: scores.subDimensionScores
+  };
+}
+
+/** 二维矩阵结果 - 教养风格 */
+function getParentingStyleResult(assessment, scores, rules) {
+  const rScore = scores.dimensionScores[rules.responsivenessDimensionId];
+  const dScore = scores.dimensionScores[rules.demandingnessDimensionId];
+  const midpoint = rules.midpoint;
+  const rHigh = rScore > midpoint;
+  const dHigh = dScore > midpoint;
+
+  let rule;
+  if (rHigh && dHigh) rule = rules.rules.find(r => r.typeId === 'authoritative');
+  else if (!rHigh && dHigh) rule = rules.rules.find(r => r.typeId === 'authoritarian');
+  else if (rHigh && !dHigh) rule = rules.rules.find(r => r.typeId === 'permissive');
+  else rule = rules.rules.find(r => r.typeId === 'neglectful');
+
+  return {
+    type: 'attachment',  // 复用 attachment 渲染模式
+    attachmentType: rule,
+    anxietyScore: rScore,   // 响应度
+    avoidanceScore: dScore, // 要求度
+    subDimensionScores: scores.subDimensionScores
+  };
+}
+
+/** 多维度类型判定（anxiety, study-motivation）*/
+function getMultiTypeResult(assessment, scores) {
+  const { scoring } = assessment;
+  const dimEntries = scoring.dimensions.map(dim => ({
+    dimensionId: dim.dimensionId,
+    score: scores.dimensionScores[dim.dimensionId]
+  }));
+  dimEntries.sort((a, b) => b.score - a.score);
+
+  const maxScore = dimEntries[0].score;
+  const minScore = dimEntries[dimEntries.length - 1].score;
+  const totalScore = Object.values(scores.dimensionScores).reduce((a, b) => a + b, 0);
+
+  // 特殊类型判定规则（study-motivation 等）
+  if (scoring.typeRules) {
+    // 迷茫型 / 全低型
+    if (scoring.typeRules.confused) {
+      const isAllLow = totalScore <= 45 || dimEntries.every(d => d.score <= 12);
+      if (isAllLow) {
+        const confusedType = scoring.types.find(t => t.condition === 'all-low');
+        return createTypeResult(assessment, confusedType, dimEntries, scores);
+      }
+    }
+    // 内驱型
+    if (scoring.typeRules.intrinsicDriven) {
+      const intrinsicScore = scores.dimensionScores['intrinsic'];
+      if (intrinsicScore >= 18) {
+        const intrinsicType = scoring.types.find(t => t.id === 'intrinsic-driven');
+        if (intrinsicType) return createTypeResult(assessment, intrinsicType, dimEntries, scores);
+      }
+    }
+    // 目标导向型
+    if (scoring.typeRules.goalOriented) {
+      const extrinsicScore = scores.dimensionScores['extrinsic'] || 0;
+      const goalClarityScore = scores.dimensionScores['goal-clarity'] || 0;
+      if (extrinsicScore >= 15 && goalClarityScore >= 15) {
+        const goalType = scoring.types.find(t => t.id === 'goal-oriented');
+        if (goalType) return createTypeResult(assessment, goalType, dimEntries, scores);
+      }
+    }
+  }
+
+  // 均衡型判定
+  if (maxScore - minScore <= 3) {
+    const balancedType = scoring.types.find(t => t.condition === 'balanced');
+    if (balancedType) return createTypeResult(assessment, balancedType, dimEntries, scores);
     return {
       type: 'anxiety',
-      subtype: 'normal',
-      primary: { ...dimEntries[0], typeInfo: primaryType },
-      secondary: { ...dimEntries[1], typeInfo: secondaryType },
-      label: primaryType.name,
+      subtype: 'balanced',
+      primary: null, secondary: null,
+      label: '均衡型',
       dimensionScores: scores.dimensionScores,
       sortedDimensions: dimEntries
     };
   }
 
-  if (assessmentId === 'attachment') {
-    const { attachmentRules } = scoring;
-    const aScore = scores.dimensionScores[attachmentRules.anxietyDimensionId];
-    const vScore = scores.dimensionScores[attachmentRules.avoidanceDimensionId];
-    const midpoint = attachmentRules.midpoint;
-
-    const aHigh = aScore > midpoint;
-    const vHigh = vScore > midpoint;
-
-    let rule;
-    if (!aHigh && !vHigh) rule = attachmentRules.rules.find(r => r.typeId === 'secure');
-    else if (aHigh && !vHigh) rule = attachmentRules.rules.find(r => r.typeId === 'anxious');
-    else if (!aHigh && vHigh) rule = attachmentRules.rules.find(r => r.typeId === 'avoidant');
-    else rule = attachmentRules.rules.find(r => r.typeId === 'fearful');
-
+  // 双高型判定
+  if (dimEntries[0].score === dimEntries[1].score) {
     return {
-      type: 'attachment',
-      attachmentType: rule,
-      anxietyScore: aScore,
-      avoidanceScore: vScore,
-      subDimensionScores: scores.subDimensionScores
+      type: 'anxiety',
+      subtype: 'dualHigh',
+      primary: dimEntries[0], secondary: dimEntries[1],
+      label: '双高型',
+      dimensionScores: scores.dimensionScores,
+      sortedDimensions: dimEntries
     };
   }
 
-  return null;
+  // 常规判定 - 最高分维度为首要类型
+  const primaryType = scoring.types.find(t => t.dominantDimension === dimEntries[0].dimensionId) ||
+                     scoring.types.find(t => t.id === dimEntries[0].dimensionId);
+  const secondaryType = scoring.types.find(t => t.dominantDimension === dimEntries[1].dimensionId) ||
+                       scoring.types.find(t => t.id === dimEntries[1].dimensionId);
+  return {
+    type: 'anxiety',
+    subtype: 'normal',
+    primary: { ...dimEntries[0], typeInfo: primaryType },
+    secondary: { ...dimEntries[1], typeInfo: secondaryType },
+    label: primaryType ? primaryType.name : dimEntries[0].dimensionId,
+    dimensionScores: scores.dimensionScores,
+    sortedDimensions: dimEntries
+  };
+}
+
+/** 创建类型结果 */
+function createTypeResult(assessment, typeInfo, sortedDims, scores) {
+  return {
+    type: 'anxiety',
+    subtype: typeInfo.id,
+    primary: { ...sortedDims[0], typeInfo },
+    secondary: { ...sortedDims[1], typeInfo },
+    label: typeInfo.name,
+    dimensionScores: scores.dimensionScores,
+    sortedDimensions: sortedDims,
+    typeInfo
+  };
 }
 
 // ==================== 页面渲染函数 ====================
@@ -347,12 +434,14 @@ function renderResult(assessmentId, answers) {
   const scores = calculateScore(assessmentId, answers);
   const levelInfo = getLevel(assessmentId, scores);
 
-  if (assessmentId === 'resilience') {
+  // 根据 scoring.type 分发渲染
+  if (a.scoring.type === 'level') {
     return renderResilienceResult(a, scores, levelInfo);
-  } else if (assessmentId === 'anxiety') {
+  } else if (a.scoring.type === 'type') {
+    if (a.scoring.attachmentRules || a.scoring.styleRules) {
+      return renderAttachmentResult(a, scores, levelInfo);
+    }
     return renderAnxietyResult(a, scores, levelInfo);
-  } else if (assessmentId === 'attachment') {
-    return renderAttachmentResult(a, scores, levelInfo);
   }
 
   return '<p>未知测评类型</p>';
@@ -587,12 +676,14 @@ function renderPaidReport(assessmentId, answers) {
   const scores = calculateScore(assessmentId, answers);
   const levelInfo = getLevel(assessmentId, scores);
 
-  if (assessmentId === 'resilience') {
+  // 根据 scoring.type 分发渲染
+  if (a.scoring.type === 'level') {
     return renderResiliencePaidReport(a, scores, levelInfo);
-  } else if (assessmentId === 'anxiety') {
+  } else if (a.scoring.type === 'type') {
+    if (a.scoring.attachmentRules || a.scoring.styleRules) {
+      return renderAttachmentPaidReport(a, scores, levelInfo);
+    }
     return renderAnxietyPaidReport(a, scores, levelInfo);
-  } else if (assessmentId === 'attachment') {
-    return renderAttachmentPaidReport(a, scores, levelInfo);
   }
 
   return '<p>未知测评类型</p>';
@@ -896,7 +987,7 @@ function handleAction(action, target) {
       break;
 
     case 'unlock-paid-report':
-      navigateTo('paid-report', id);
+      showPaymentModal(id);
       break;
 
     case 'retake':
@@ -909,8 +1000,8 @@ function handleAction(action, target) {
     case 'share':
       if (navigator.share) {
         navigator.share({
-          title: '亲密关系依附类型测试',
-          text: '来测测你在亲密关系中的依附类型吧！',
+          title: assessment.name,
+          text: '来测测你的心理类型吧！',
           url: window.location.href
         }).catch(() => {});
       } else {
@@ -925,10 +1016,141 @@ function handleAction(action, target) {
       break;
 
     case 'contact-counselor':
-      // 预约咨询占位
-      alert('预约咨询功能即将上线，敬请期待！');
+      showCounselorModal();
+      break;
+
+    case 'close-modal':
+      closeModal();
+      break;
+
+    case 'confirm-paid':
+      closeModal();
+      navigateTo('paid-report', id);
       break;
   }
+}
+
+// ==================== 支付弹窗 & 预约咨询弹窗 ====================
+
+/**
+ * 显示付费解锁弹窗
+ * 流程：展示微信收款码 → 用户扫码付款 → 点击"我已付款" → 解锁报告
+ */
+function showPaymentModal(assessmentId) {
+  const assessment = assessments.find(a => a.id === assessmentId);
+  if (!assessment) return;
+
+  const price = assessment.price;
+  const priceLabel = assessment.price + '元';
+
+  // 移除已有弹窗
+  const existing = document.getElementById('modal-overlay');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'modal-overlay';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+
+  modal.innerHTML = `
+    <div style="background:white;border-radius:16px;max-width:360px;width:100%;padding:28px 24px;text-align:center;position:relative;animation:modalIn 0.3s ease;">
+      <button data-action="close-modal" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;color:#999;cursor:pointer;padding:4px;">&times;</button>
+      
+      <div style="font-size:28px;margin-bottom:8px;">🔐</div>
+      <h3 style="font-size:18px;color:#3A4F5C;margin-bottom:4px;">解锁深度报告</h3>
+      <p style="font-size:13px;color:#8C8C8C;margin-bottom:20px;">${assessment.name} · 完整报告</p>
+      
+      <!-- 收款码区域 -->
+      <div style="background:#FAF3E8;border-radius:12px;padding:20px;margin-bottom:16px;">
+        <p style="font-size:14px;color:#3A4F5C;margin-bottom:12px;font-weight:500;">微信扫码支付 ${priceLabel}</p>
+        <div style="width:180px;height:180px;margin:0 auto;background:#f0f0f0;border-radius:8px;display:flex;align-items:center;justify-content:center;border:2px dashed #D4A574;">
+          <img src="wechat-pay-qr.png" style="width:170px;height:170px;border-radius:6px;" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=\\'color:#B0B0B0;font-size:12px;text-align:center;padding:20px;\\'>收款码加载中<br><span style=\\'font-size:11px;color:#ccc;\\'>请替换 wechat-pay-qr.png</span></div>'">
+        </div>
+        <p style="font-size:11px;color:#B0B0B0;margin-top:8px;">支付后点击下方按钮解锁</p>
+      </div>
+
+      <!-- 付款说明 -->
+      <div style="text-align:left;background:#F7F7F7;border-radius:8px;padding:12px;margin-bottom:16px;">
+        <p style="font-size:12px;color:#4A6575;line-height:1.8;">
+          📋 付款说明：<br>
+          1. 微信扫码支付 <strong>${priceLabel}</strong><br>
+          2. 支付备注填：<strong>${assessment.name}</strong><br>
+          3. 付款后点击"我已付款"查看报告
+        </p>
+      </div>
+
+      <!-- 操作按钮 -->
+      <button data-action="confirm-paid" data-id="${assessmentId}" style="width:100%;padding:14px;background:linear-gradient(135deg,#D4A574,#C49060);color:white;border:none;border-radius:999px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:10px;">
+        我已付款，查看报告
+      </button>
+      <p style="font-size:11px;color:#B0B0B0;">付款后报告即时解锁，如遇问题请添加微信咨询</p>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  // 点击遮罩关闭
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+}
+
+/**
+ * 显示预约咨询弹窗
+ * 展示微信二维码，引导用户扫码添加
+ */
+function showCounselorModal() {
+  const existing = document.getElementById('modal-overlay');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'modal-overlay';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+
+  modal.innerHTML = `
+    <div style="background:white;border-radius:16px;max-width:340px;width:100%;padding:28px 24px;text-align:center;position:relative;animation:modalIn 0.3s ease;">
+      <button data-action="close-modal" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;color:#999;cursor:pointer;padding:4px;">&times;</button>
+      
+      <div style="font-size:28px;margin-bottom:8px;">💚</div>
+      <h3 style="font-size:18px;color:#3A4F5C;margin-bottom:4px;">预约1对1咨询</h3>
+      <p style="font-size:13px;color:#8C8C8C;margin-bottom:20px;">扫码添加咨询师微信，预约专属咨询</p>
+      
+      <!-- 微信二维码 -->
+      <div style="background:#FAF3E8;border-radius:12px;padding:20px;margin-bottom:16px;">
+        <div style="width:180px;height:180px;margin:0 auto;background:#f0f0f0;border-radius:8px;display:flex;align-items:center;justify-content:center;border:2px dashed #D4A574;">
+          <img src="wechat-qr.png" style="width:170px;height:170px;border-radius:6px;" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=\\'color:#B0B0B0;font-size:12px;text-align:center;padding:20px;\\'>微信二维码加载中<br><span style=\\'font-size:11px;color:#ccc;\\'>请替换 wechat-qr.png</span></div>'">
+        </div>
+        <p style="font-size:12px;color:#4A6575;margin-top:10px;">微信扫一扫，添加咨询师</p>
+      </div>
+
+      <!-- 咨询说明 -->
+      <div style="text-align:left;background:#F7F7F7;border-radius:8px;padding:12px;margin-bottom:16px;">
+        <p style="font-size:12px;color:#4A6575;line-height:1.8;">
+          💬 咨询流程：<br>
+          1. 扫码添加微信<br>
+          2. 简单沟通你的需求<br>
+          3. 预约咨询时间<br>
+          4. 开始1对1专属咨询
+        </p>
+      </div>
+
+      <button data-action="close-modal" style="width:100%;padding:12px;background:#D4A574;color:white;border:none;border-radius:999px;font-size:14px;font-weight:500;cursor:pointer;">
+        我知道了
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+}
+
+/**
+ * 关闭弹窗
+ */
+function closeModal() {
+  const modal = document.getElementById('modal-overlay');
+  if (modal) modal.remove();
 }
 
 // ==================== 事件委托绑定 ====================
